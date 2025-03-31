@@ -4,13 +4,15 @@ import axios from "axios";
 import { useEffect } from "react";
 import "./Home.css";
 import Popupform from "./PopupForm";
-
+import Dropdown from "./Dropdown";
 function Home() {
   const [count, setCount] = useState([]); // Initialize as an empty array
   const [task, setTask] = useState(""); // Separate state for the input field
   const [isChecked, setIsChecked] = useState(false); // State to manage checkbox
   const [description, setDescription] = useState(""); // State to manage description
   const [isModelOpen, setIsModelOpen] = useState(false); // State to manage modal visibility
+  const [openDescriptionId, setOpenDescriptionId] = useState(null); // State to manage which task's description is open
+
   useEffect(() => {
     // Fetch tasks from the server when the component mounts
     axios
@@ -62,7 +64,6 @@ function Home() {
       )
     );
     // console.log(count);
-
     axios
       .put(`http://localhost:5000/tasks/isChecked/${taskId}`, {
         isChecked: !isChecked,
@@ -79,6 +80,11 @@ function Home() {
           )
         );
       });
+  };
+
+  //this function is used to toggle the description of the task
+  const toggleDescription = (taskId) => {
+    setOpenDescriptionId((prevId) => (prevId === taskId ? null : taskId));
   };
 
   return (
@@ -126,66 +132,50 @@ function Home() {
               <li className="list-group-item">No Task</li>
             ) : (
               count.map((item, index) => (
-                <li
-                  key={item.id} // Use index as fallback key if id is not available
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                  style={{ marginTop: "1rem" }}
-                >
-                  <div className="d-flex flex-row justify-content-between align-items-center">
-                    <input
-                      type="checkbox"
-                      className="mx-2 checkbox"
-                      checked={item.isChecked}
-                      onChange={() => handleedit(item.id, item.isChecked)}
-                    />
-                    <span
-                      style={{
-                        textDecoration: item.isChecked
-                          ? "line-through"
-                          : "none",
-                        color: item.isChecked ? "gray" : "",
-                      }}
-                    >
-                      {item.task}
-                    </span>
-                  </div>
-                  <div
-                    className="button-group"
-                    style={{ display: "flex", gap: "1rem" }}
+                <React.Fragment key={item.id}>
+                  <li
+                    className="list-group-item d-flex justify-content-between align-items-center"
+                    style={{ marginTop: "1rem" }}
                   >
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handledelete(item.id)}
-                    >
-                      Delete
-                    </button>
-                    <div class="dropdown-center">
-                      <button
-                        className="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      ></button>
-                      <ul class="dropdown-menu">
-                        <li>
-                          <a class="dropdown-item" href="#">
-                            Action
-                          </a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#">
-                            Another action
-                          </a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" href="#">
-                            Something else here
-                          </a>
-                        </li>
-                      </ul>
+                    <div className="d-flex flex-row justify-content-between align-items-center">
+                      <input
+                        type="checkbox"
+                        className="mx-2 checkbox"
+                        checked={item.isChecked}
+                        onChange={() => handleedit(item.id, item.isChecked)}
+                      />
+                      <span
+                        style={{
+                          textDecoration: item.isChecked
+                            ? "line-through"
+                            : "none",
+                          color: item.isChecked ? "gray" : "",
+                        }}
+                      >
+                        {item.task}
+                      </span>
                     </div>
-                  </div>
-                </li>
+                    <div
+                      className="button-group"
+                      style={{ display: "flex", gap: "1rem" }}
+                    >
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handledelete(item.id)}
+                      >
+                        Delete
+                      </button>
+                      <Dropdown
+                        taskId={item.id}
+                        isOpen={openDescriptionId === item.id}
+                        description={item.description}
+                        createdDate={item.id}
+                        onToggle={toggleDescription}
+                        onClose={() => setOpenDescriptionId(null)}
+                      />
+                    </div>
+                  </li>
+                </React.Fragment>
               ))
             )}
           </ul>
