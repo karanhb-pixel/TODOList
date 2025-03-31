@@ -1,0 +1,38 @@
+.list-item-main {
+  transition: background-color 0.2s;
+  border-bottom: none !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.list-item-expanded {
+  border-top: none !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  animation: expand 0.3s ease-out;
+}
+
+@keyframes expand {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expanded-content {
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.checkbox {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.button-group {
+  gap: 1rem;
+}

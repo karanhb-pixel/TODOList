@@ -18,7 +18,7 @@ app.get("/tasks", (req, res) => {
       ...item,
       isChecked: !!item.isChecked, // Convert 1/0 to true/false
     }));
-    console.log(normalizedData);
+    // console.log(normalizedData);
     res.json(normalizedData);
   });
 });
@@ -65,6 +65,7 @@ app.delete("/tasks/:id", (req, res) => {
 app.put("/tasks/isChecked/:id", (req, res) => {
   const taskId = req.params.id;
   const isChecked = req.body.isChecked ? 1 : 0; // Convert boolean to 1/0 for MySQL
+
   const q = "UPDATE tasks SET isChecked = ? WHERE id = ?";
 
   db.query(q, [isChecked, taskId], (err, result) => {

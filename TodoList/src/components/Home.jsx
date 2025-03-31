@@ -1,10 +1,10 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import "./Home.css";
 import Popupform from "./PopupForm";
-import Dropdown from "./Dropdown";
+import ExpandableItem from "./ExpandableItem";
+
 function Home() {
   const [count, setCount] = useState([]); // Initialize as an empty array
   const [task, setTask] = useState(""); // Separate state for the input field
@@ -69,7 +69,7 @@ function Home() {
         isChecked: !isChecked,
       })
       .then(() => {
-        // console.log("Task updated successfully");
+        console.log("Task updated successfully");
       })
       .catch((error) => {
         console.error("Error updating task:", error); // Handle error response
@@ -132,50 +132,14 @@ function Home() {
               <li className="list-group-item">No Task</li>
             ) : (
               count.map((item, index) => (
-                <React.Fragment key={item.id}>
-                  <li
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                    style={{ marginTop: "1rem" }}
-                  >
-                    <div className="d-flex flex-row justify-content-between align-items-center">
-                      <input
-                        type="checkbox"
-                        className="mx-2 checkbox"
-                        checked={item.isChecked}
-                        onChange={() => handleedit(item.id, item.isChecked)}
-                      />
-                      <span
-                        style={{
-                          textDecoration: item.isChecked
-                            ? "line-through"
-                            : "none",
-                          color: item.isChecked ? "gray" : "",
-                        }}
-                      >
-                        {item.task}
-                      </span>
-                    </div>
-                    <div
-                      className="button-group"
-                      style={{ display: "flex", gap: "1rem" }}
-                    >
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => handledelete(item.id)}
-                      >
-                        Delete
-                      </button>
-                      <Dropdown
-                        taskId={item.id}
-                        isOpen={openDescriptionId === item.id}
-                        description={item.description}
-                        createdDate={item.id}
-                        onToggle={toggleDescription}
-                        onClose={() => setOpenDescriptionId(null)}
-                      />
-                    </div>
-                  </li>
-                </React.Fragment>
+                <ExpandableItem
+                  key={item.id}
+                  item={item}
+                  isExpanded={openDescriptionId === item.id}
+                  onToggle={toggleDescription}
+                  onDelete={handledelete}
+                  onToggleCheck={handleedit}
+                />
               ))
             )}
           </ul>
