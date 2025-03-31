@@ -29,6 +29,7 @@ function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden={!isModelOpen}
+        inert={!isModelOpen}
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
