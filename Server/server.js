@@ -1,86 +1,85 @@
 import cors from "cors";
 import express from "express";
-import db from "./db.js";
+import { Task } from "./Task_model.js";
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.DB_PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
 //Get all Tasks
-app.get("/tasks", (req, res) => {
-  const q = "SELECT * FROM tasks";
-  db.query(q, (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Error fetching tasks" });
-    }
-    const normalizedData = data.map((item) => ({
-      ...item,
+app.get("/tasks", async (req, res) => {
+  try {
+    const task = await Task.findAll(); // Get all tasks from the database
+    const normalizedData = task.map((item) => ({
+      ...item.toJSON(), // Convert Sequelize instance to plain object
       isChecked: !!item.isChecked, // Convert 1/0 to true/false
     }));
     // console.log(normalizedData);
     res.json(normalizedData);
-  });
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({ error: "Error fetching tasks" });
+  }
 });
 
 // Add a new Task
-app.post("/tasks", (req, res) => {
+app.post("/tasks", async (req, res) => {
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
   if (!newTask || newTask.trim() === "") {
     return res.status(400).json({ error: "Task cannot be empty" });
   }
-  const q = "INSERT INTO tasks (task,description) VALUES (?,?)";
-  db.query(q, [newTask, description], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Error adding Task" });
-    }
+  try {
+    const task = await Task.create({ task: newTask, description: description }); // Create a new task in the database
     res.status(201).json({
       message: "Task added Successfully",
-      id: result.insertId,
-      task: newTask,
-      description: description,
-      isChecked: false, // Default value for isChecked
+      id: task.id,
+      task: task.task,
+      description: task.description,
+      isChecked: task.isChecked, // Default value for isChecked
     });
-  });
-  //   res.status(201).json({ message: "Task added Successfully", newTask });
+  } catch (error) {
+    return res.status(500).json({ error: "Error adding Task", error });
+  }
 });
 
 //Delete a Task
-app.delete("/tasks/:id", (req, res) => {
+app.delete("/tasks/:id", async (req, res) => {
   const taskId = req.params.id;
-  const q = "DELETE FROM tasks WHERE id =?";
-  db.query(q, [taskId], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Error deleting task" });
-    }
-    if (result.affectedRows === 0) {
+
+  try {
+    const result = await Task.destroy({ where: { id: taskId } });
+    if (result === 0) {
       return res.status(404).json({ error: "Task not found" });
     }
     res.status(200).json({ message: "Task deleted successfully" });
-  });
+  } catch (error) {
+    return res.status(500).json({ error: "Error deleting task" });
+  }
 });
 
 // Update a Task's isChecked status
-app.put("/tasks/isChecked/:id", (req, res) => {
+app.put("/tasks/isChecked/:id", async (req, res) => {
   const taskId = req.params.id;
   const isChecked = req.body.isChecked ? 1 : 0; // Convert boolean to 1/0 for MySQL
 
-  const q = "UPDATE tasks SET isChecked = ? WHERE id = ?";
-
-  db.query(q, [isChecked, taskId], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Error updating task" });
-    }
-    if (result.affectedRows === 0) {
+  try {
+    const result = await Task.update(
+      { isChecked: isChecked },
+      { where: { id: taskId } }
+    );
+    if (result[0] === 0) {
       return res.status(404).json({ error: "Task not found" });
     }
     res.status(200).json({ message: "Task updated successfully" });
-  });
+  } catch (error) {
+    return res.status(404).json({ error: "Task not found" });
+  }
 });
 
 // Update a Task's title or description status
-app.put("/tasks/title/:id", (req, res) => {
+app.put("/tasks/title/:id", async (req, res) => {
   const taskId = req.params.id;
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
@@ -88,17 +87,18 @@ app.put("/tasks/title/:id", (req, res) => {
     return res.status(400).json({ error: "Task cannot be empty" });
   }
 
-  const q = "UPDATE tasks SET task = ? , description = ? WHERE id = ?";
-
-  db.query(q, [newTask, description, taskId], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Error updating task" });
-    }
-    if (result.affectedRows === 0) {
+  try {
+    const result = await Task.update(
+      { task: newTask, description: description },
+      { where: { id: taskId } }
+    );
+    if (result[0] === 0) {
       return res.status(404).json({ error: "Task not found" });
     }
     res.status(200).json({ message: "Task updated successfully" });
-  });
+  } catch (error) {
+    return res.status(500).json({ error: "Error updating task" });
+  }
 });
 
 // Start the server

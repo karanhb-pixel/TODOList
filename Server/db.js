@@ -1,37 +1,28 @@
-import mysql from "mysql2";
+import { Sequelize, DataTypes } from "sequelize";
+import dotenv from "dotenv";
 
-//Create mysql connection
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "todolist",
-});
+dotenv.config();
 
-//compile mysql connection
-db.connect((err) => {
-  if (err) {
-    console.log("Error connecting to database:", err);
-    return;
+//Initialize Sequalize instance
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: process.env.DB_LOGGING === "true", // Disable logging for cleaner output
   }
-  console.log("Connected to database");
-});
+);
 
-const createTableQuery = `CREATE TABLE IF NOT EXISTS tasks (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  task VARCHAR(255) NOT NULL,
-  description VARCHAR(255) DEFAULT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  isChecked BOOLEAN DEFAULT FALSE
-);`;
+// Test the connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connected to the database using Sequelize");
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
+  });
 
-db.query(createTableQuery, (err, result) => {
-  if (err) {
-    console.log("Error creating table:", err);
-    result;
-  }
-  console.log("Table created or already exists");
-});
-
-export default db;
+export { sequelize };
