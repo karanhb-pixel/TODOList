@@ -9,6 +9,16 @@ const ExpandableItem = ({
   onDelete,
   onToggleCheck,
 }) => {
+  // Format the updated_at date using new Date()
+  const formattedDate = new Date(item.updated_at).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true, // Ensures 12-hour format with AM/PM
+  });
+
   return (
     <React.Fragment>
       <li className="list-group-item list-item-main">
@@ -24,7 +34,7 @@ const ExpandableItem = ({
               {item.task}
             </span>
           </div>
-          <div className="button-group">
+          <div className="button-group d-flex gap-2">
             <button
               className="btn btn-danger"
               onClick={() => onDelete(item.id)}
@@ -46,9 +56,7 @@ const ExpandableItem = ({
           <div className="expanded-content">
             <h6>Task Details</h6>
             <p>{item.description}</p>
-            <small className="text-muted">
-              Created: {new Date(item.id).toLocaleDateString()}
-            </small>
+            <small className="text-muted">Updated: {formattedDate}</small>
           </div>
         </li>
       )}

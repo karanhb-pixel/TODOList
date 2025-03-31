@@ -69,7 +69,7 @@ function Home() {
         isChecked: !isChecked,
       })
       .then(() => {
-        console.log("Task updated successfully");
+        // console.log("Task updated successfully");
       })
       .catch((error) => {
         console.error("Error updating task:", error); // Handle error response
