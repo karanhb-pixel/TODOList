@@ -45,8 +45,20 @@ function Home() {
   }, []); // Empty dependency array to run only once on mount
 
   const handleAddTask = (task, description) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      alert("You are not Logged in!");
+    }
+
     axios
-      .post("http://localhost:5000/tasks", { task, description })
+      .post(
+        "http://localhost:5000/tasks",
+        { task, description },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       .then((response) => {
         setCount([
           ...count,
@@ -59,8 +71,16 @@ function Home() {
   };
 
   const handledelete = (taskId) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      alert("You are not Logged in!");
+    }
+
     axios
-      .delete(`http://localhost:5000/tasks/${taskId}`)
+      .delete(`http://localhost:5000/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((response) => {
         setCount(count.filter((item) => item.id !== taskId)); // remove task from the array
       })
@@ -70,15 +90,26 @@ function Home() {
   };
 
   const handleedit = (taskId, isChecked) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      alert("You are not Logged in!");
+    }
     setCount(
       count.map((item) =>
         item.id === taskId ? { ...item, isChecked: !item.isChecked } : item
       )
     );
     axios
-      .put(`http://localhost:5000/tasks/isChecked/${taskId}`, {
-        isChecked: !isChecked,
-      })
+      .put(
+        `http://localhost:5000/tasks/isChecked/${taskId}`,
+        {
+          isChecked: !isChecked,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       .then(() => {})
       .catch((error) => {
         console.error("Error updating task:", error); // Handle error response

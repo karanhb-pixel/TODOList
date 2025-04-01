@@ -25,6 +25,10 @@ const Task = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     timestamps: false, // Disable automatic createdAt and updatedAt columns

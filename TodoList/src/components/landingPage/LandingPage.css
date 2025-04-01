@@ -1,0 +1,26 @@
+.landingPage {
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+  gap: 2rem;
+}
+
+.heading h1 {
+  text-align: center;
+  color: white;
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+.buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+.buttons button {
+  width: 150px;
+}

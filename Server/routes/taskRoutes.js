@@ -1,12 +1,15 @@
 import express from "express";
 import { Task } from "../model/Task_model.js";
+import { where } from "sequelize";
 
 const app = express.Router();
 
 //Get all Tasks
 app.get("/", async (req, res) => {
   try {
-    const task = await Task.findAll(); // Get all tasks from the database
+    const task = await Task.findAll({
+      where: { userId: req.user.user.userId },
+    }); // Get all tasks from the database
     const normalizedData = task.map((item) => ({
       ...item.toJSON(), // Convert Sequelize instance to plain object
       isChecked: !!item.isChecked, // Convert 1/0 to true/false
@@ -23,18 +26,23 @@ app.get("/", async (req, res) => {
 app.post("/", async (req, res) => {
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
+  const userId = req.user.user.user_id;
+
   if (!newTask || newTask.trim() === "") {
     return res.status(400).json({ error: "Task cannot be empty" });
   }
   try {
-    const task = await Task.create({ task: newTask, description: description }); // Create a new task in the database
-    res.status(201).json({
-      message: "Task added Successfully",
-      id: task.id,
-      task: task.task,
-      description: task.description,
-      isChecked: task.isChecked, // Default value for isChecked
-    });
+    const task = await Task.create({
+      task: newTask,
+      description: description,
+      userId: userId,
+    }); // Create a new task in the database
+    res.status(201).json(
+      {
+        message: "Task added Successfully",
+      },
+      task
+    );
   } catch (error) {
     return res.status(500).json({ error: "Error adding Task", error });
   }
@@ -45,7 +53,9 @@ app.delete("/:id", async (req, res) => {
   const taskId = req.params.id;
 
   try {
-    const result = await Task.destroy({ where: { id: taskId } });
+    const result = await Task.destroy({
+      where: { id: taskId, userId: req.user.user_id },
+    });
     if (result === 0) {
       return res.status(404).json({ error: "Task not found" });
     }

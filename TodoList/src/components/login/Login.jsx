@@ -46,8 +46,8 @@ function Login({ setAuthToken }) {
   return (
     <div className="container">
       <div className="login">
-        <div className="heading">
-          <h1 className="text-center">Welcome To Registration Page</h1>
+        <div className="">
+          <h1 className="heading_text">Welcome To Login Page</h1>
         </div>
         <div className="form" onSubmit={handleLogin}>
           <form>
