@@ -11,7 +11,7 @@ function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
     e.preventDefault();
 
     if (task.trim() !== "") {
-      console.log(task, description);
+      // console.log(task, description);
       handleAddTask(task, description); // Call the function to add task
       setIsModelOpen(false); // Close the modal
 

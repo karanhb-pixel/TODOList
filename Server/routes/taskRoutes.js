@@ -4,7 +4,7 @@ import { Task } from "../model/Task_model.js";
 const app = express.Router();
 
 //Get all Tasks
-app.get("/tasks", async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     const task = await Task.findAll(); // Get all tasks from the database
     const normalizedData = task.map((item) => ({
@@ -20,7 +20,7 @@ app.get("/tasks", async (req, res) => {
 });
 
 // Add a new Task
-app.post("/tasks", async (req, res) => {
+app.post("/", async (req, res) => {
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
   if (!newTask || newTask.trim() === "") {
@@ -41,7 +41,7 @@ app.post("/tasks", async (req, res) => {
 });
 
 //Delete a Task
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/:id", async (req, res) => {
   const taskId = req.params.id;
 
   try {
@@ -56,7 +56,7 @@ app.delete("/tasks/:id", async (req, res) => {
 });
 
 // Update a Task's isChecked status
-app.put("/tasks/isChecked/:id", async (req, res) => {
+app.put("/isChecked/:id", async (req, res) => {
   const taskId = req.params.id;
   const isChecked = req.body.isChecked ? 1 : 0; // Convert boolean to 1/0 for MySQL
 
@@ -75,7 +75,7 @@ app.put("/tasks/isChecked/:id", async (req, res) => {
 });
 
 // Update a Task's title or description status
-app.put("/tasks/title/:id", async (req, res) => {
+app.put("/title/:id", async (req, res) => {
   const taskId = req.params.id;
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description

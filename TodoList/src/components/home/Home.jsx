@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import "./Home.css";
-import Popupform from "./PopupForm";
-import ExpandableItem from "./ExpandableItem";
+import Popupform from "../popupForm/PopupForm";
+import ExpandableItem from "../expandableItem/ExpandableItem";
 
 function Home() {
   const [count, setCount] = useState([]); // Initialize as an empty array
@@ -14,23 +14,40 @@ function Home() {
   const [openDescriptionId, setOpenDescriptionId] = useState(null); // State to manage which task's description is open
 
   useEffect(() => {
-    // Fetch tasks from the server when the component mounts
-    axios
-      .get("http://localhost:5000/tasks")
-      .then((response) => {
-        // console.log(response.data); // Handle success response
-        setCount(response.data); // Set the tasks in the state
-      })
-      .catch((error) => {
-        console.error("Error fetching tasks:", error); // Handle error response
-      });
+    const fetchTasks = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) {
+          alert("You are not Logged in!");
+        }
+
+        // Fetch tasks from the server when the component mounts
+        axios
+          .get("http://localhost:5000/tasks", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((response) => {
+            setCount(response.data); // Set the tasks in the state
+          });
+      } catch (error) {
+        if (error.response && error.response.data) {
+          // Check if the server returned a specific error message
+          const errorMessage =
+            error.response.data.error || "An error occurred.";
+          alert(`${errorMessage}`);
+        } else {
+          alert("An unexpected error occurred. Please try again.");
+        }
+      }
+    };
+    fetchTasks();
   }, []); // Empty dependency array to run only once on mount
 
   const handleAddTask = (task, description) => {
     axios
       .post("http://localhost:5000/tasks", { task, description })
       .then((response) => {
-        //   console.log(response.data); // Handle success response
         setCount([
           ...count,
           { id: response.data.id, task, description, isChecked: false },
@@ -39,17 +56,12 @@ function Home() {
       .catch((error) => {
         console.error("Error adding task:", error); // Handle error response
       });
-
-    // setTask(""); // Clear the input field
-    // setDescription(""); // Clear the description field
   };
 
   const handledelete = (taskId) => {
     axios
       .delete(`http://localhost:5000/tasks/${taskId}`)
       .then((response) => {
-        // console.log(response.data); // Handle success response
-
         setCount(count.filter((item) => item.id !== taskId)); // remove task from the array
       })
       .catch((error) => {
@@ -63,14 +75,11 @@ function Home() {
         item.id === taskId ? { ...item, isChecked: !item.isChecked } : item
       )
     );
-    // console.log(count);
     axios
       .put(`http://localhost:5000/tasks/isChecked/${taskId}`, {
         isChecked: !isChecked,
       })
-      .then(() => {
-        // console.log("Task updated successfully");
-      })
+      .then(() => {})
       .catch((error) => {
         console.error("Error updating task:", error); // Handle error response
         // Revert the change if the query fails
@@ -88,30 +97,8 @@ function Home() {
   };
 
   return (
-    <div
-      className="home"
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <div
-        className="card_container"
-        style={{
-          backgroundColor: "#f8f9fa",
-          padding: "2rem 5rem",
-          borderRadius: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          maxWidth: "800px",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          margin: "auto",
-        }}
-      >
+    <div className="home">
+      <div className="card_container">
         <h1 className="my-2 heading text-center">TodoList</h1>
 
         <div className="form-group align-self-center d-flex justify-content-center w-100">
@@ -123,11 +110,8 @@ function Home() {
           </button>
         </div>
 
-        <div className="list" style={{ marginTop: "2rem", flexGrow: "1" }}>
-          <ul
-            style={{ padding: "0", display: "flex", flexDirection: "column" }}
-            className="list-group"
-          >
+        <div className="list">
+          <ul className="list-group">
             {count.length === 0 ? (
               <li className="list-group-item">No Task</li>
             ) : (

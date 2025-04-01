@@ -12,9 +12,15 @@ app.post("/register", async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    const oldUser = await User.findOne({ where: { email } });
-    if (oldUser) {
-      return res.status(400).json({ error: "User already exists" });
+    const oldEmailUser = await User.findOne({ where: { email } });
+    if (oldEmailUser) {
+      return res.status(400).json({ error: "User with Email already exists" });
+    }
+    const oldUsernameUser = await User.findOne({ where: { username } });
+    if (oldUsernameUser) {
+      return res
+        .status(400)
+        .json({ error: "User with Username already exists" });
     }
 
     // Encrypt the password
@@ -36,7 +42,7 @@ app.post("/register", async (req, res) => {
 
     res.status(201).json({ user, token });
   } catch (error) {
-    console.error("Error registering user:", error);
+    // console.error("Error registering user:", error);
     res.status(500).json({ error: "Error registering user" });
   }
 
@@ -60,7 +66,7 @@ app.post("/register", async (req, res) => {
       }
       return res.status(400).json({ error: "Invalid credentials" });
     } catch (error) {
-      console.error("Error logging in user:", error);
+      // console.error("Error logging in user:", error);
       res.status(500).json({ error: "Error logging in user" });
     }
   });

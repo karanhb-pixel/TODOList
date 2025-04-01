@@ -14,9 +14,7 @@ app.use("/auth", userRoutes);
 
 //middleware for routes protection
 app.use(authMiddleware);
-
-//Use the taskRoutes
-app.use("/", taskRoutes);
+app.use("/tasks", taskRoutes); //Use the taskRoutes
 
 //get user profile
 app.get("/profile", (req, res) => {
