@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import "./Home.css";
 import Popupform from "../popupForm/PopupForm";
 import ExpandableItem from "../expandableItem/ExpandableItem";
+import { useAuth } from "../AuthContext";
 
 function Home() {
   const [count, setCount] = useState([]); // Initialize as an empty array
@@ -12,19 +13,18 @@ function Home() {
   const [description, setDescription] = useState(""); // State to manage description
   const [isModelOpen, setIsModelOpen] = useState(false); // State to manage modal visibility
   const [openDescriptionId, setOpenDescriptionId] = useState(null); // State to manage which task's description is open
+  const { authToken } = useAuth();
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-
-        if (!token) {
+        if (!authToken) {
           alert("You are not Logged in!");
         }
 
         // Fetch tasks from the server when the component mounts
         const response = await axios.get("http://localhost:5000/tasks", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${authToken}` },
         });
 
         setCount(response.data); // Set the tasks in the state
@@ -43,16 +43,15 @@ function Home() {
   }, []); // Empty dependency array to run only once on mount
 
   const handleAddTask = async (task, description) => {
-    const token = localStorage.getItem("authToken");
     try {
-      if (!token) {
+      if (!authToken) {
         alert("You are not Logged in!");
       }
       const response = await axios.post(
         "http://localhost:5000/tasks",
         { task, description },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${authToken}` },
         }
       );
 
@@ -66,15 +65,14 @@ function Home() {
   };
 
   const handledelete = async (taskId) => {
-    const token = localStorage.getItem("authToken");
     try {
-      if (!token) {
+      if (!authToken) {
         alert("You are not Logged in!");
       }
       const response = await axios.delete(
         `http://localhost:5000/tasks/${taskId}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${authToken}` },
         }
       );
       setCount(count.filter((item) => item.id !== taskId)); // remove task from the array
@@ -84,10 +82,10 @@ function Home() {
   };
 
   const handleedit = async (taskId, isChecked) => {
-    const token = localStorage.getItem("authToken");
     try {
-      if (!token) {
+      if (!authToken) {
         alert("You are not Logged in!");
+        return;
       }
       setCount(
         count.map((item) =>
@@ -101,7 +99,7 @@ function Home() {
           isChecked: !isChecked,
         },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${authToken}` },
         }
       );
     } catch (error) {

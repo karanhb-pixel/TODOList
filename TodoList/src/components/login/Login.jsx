@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import "./Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 function Login({ setAuthToken }) {
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,15 +29,12 @@ function Login({ setAuthToken }) {
         console.log("Token not found!");
         return;
       }
-      localStorage.setItem("authToken", response.data.token);
 
-      setAuthToken(response.data.token);
-
+      login(response.data.token);
       alert("Login sucessfull!");
       navigate("/tasks");
     } catch (error) {
-      console.log("error:", error);
-
+      console.error("error:", error);
       if (error.response && error.response.data) {
         // Check if the server returned a specific error message
         const errorMessage = error.response.data.error || "An error occurred.";

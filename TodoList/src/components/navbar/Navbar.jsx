@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
-const Navbar = ({ handleLogout }) => {
+import { useAuth } from "../AuthContext";
+
+const Navbar = () => {
   const navigate = useNavigate();
-  const [log, setLog] = useState(false);
-  const handleLogoutClick = () => {
-    setLog(false);
-    handleLogout();
+  const { authToken, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
     navigate("/login");
   };
   return (
@@ -38,25 +40,37 @@ const Navbar = ({ handleLogout }) => {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/tasks">
-                Link
+                Tasks
               </Link>
             </li>
           </ul>
           <form className="d-flex gap-3" role="search">
-            <button
-              className="btn btn-info"
-              type="submit"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </button>
-            <button
-              className="btn btn-info"
-              type="submit"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
+            {authToken ? (
+              <button
+                className="btn btn-info"
+                type="submit"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <button
+                  className="btn btn-info"
+                  type="submit"
+                  onClick={() => navigate("/register")}
+                >
+                  Register
+                </button>
+                <button
+                  className="btn btn-info"
+                  type="submit"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </button>
+              </>
+            )}
           </form>
         </div>
       </div>

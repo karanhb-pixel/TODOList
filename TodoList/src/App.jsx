@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
+  Navigate,
 } from "react-router-dom";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
@@ -12,34 +12,30 @@ import Navbar from "./components/navbar/Navbar";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import LandingPage from "./components/landingPage/LandingPage";
-function App() {
-  const [authToken, setAuthToken] = useState(null);
-  const navigate = useNavigate();
+import { AuthProvider } from "./components/AuthContext";
+import PrivateRoute from "./components/privateRoute/PrivateRoute";
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setAuthToken(null);
-    alert("You Have been logged out.");
-  };
+function App() {
   return (
     <>
-      <Router>
-        <Navbar handleLogout={handleLogout} authToken={authToken} />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/login"
-            element={<Login setAuthToken={setAuthToken} />}
-          />
-          <Route
-            path="/tasks"
-            element={
-              authToken ? <Home authToken={authToken} /> : navigate("/login")
-            }
-          />
-        </Routes>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/tasks"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </>
   );
 }
