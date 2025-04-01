@@ -13,11 +13,11 @@ app.use(express.json());
 app.use("/auth", userRoutes);
 
 //middleware for routes protection
-app.use(authMiddleware);
-app.use("/tasks", taskRoutes); //Use the taskRoutes
+
+app.use("/tasks", authMiddleware, taskRoutes); //Use the taskRoutes
 
 //get user profile
-app.get("/profile", (req, res) => {
+app.get("/profile", authMiddleware, (req, res) => {
   res.json({ user: req.user });
 });
 

@@ -8,7 +8,7 @@ const app = express.Router();
 app.get("/", async (req, res) => {
   try {
     const task = await Task.findAll({
-      where: { userId: req.user.user.userId },
+      where: { userId: req.user.user_id },
     }); // Get all tasks from the database
     const normalizedData = task.map((item) => ({
       ...item.toJSON(), // Convert Sequelize instance to plain object
@@ -26,7 +26,7 @@ app.get("/", async (req, res) => {
 app.post("/", async (req, res) => {
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
-  const userId = req.user.user.user_id;
+  const userId = req.user.user_id;
 
   if (!newTask || newTask.trim() === "") {
     return res.status(400).json({ error: "Task cannot be empty" });
@@ -37,12 +37,10 @@ app.post("/", async (req, res) => {
       description: description,
       userId: userId,
     }); // Create a new task in the database
-    res.status(201).json(
-      {
-        message: "Task added Successfully",
-      },
-      task
-    );
+    res.status(201).json({
+      message: "Task added Successfully",
+      task,
+    });
   } catch (error) {
     return res.status(500).json({ error: "Error adding Task", error });
   }
@@ -73,7 +71,7 @@ app.put("/isChecked/:id", async (req, res) => {
   try {
     const result = await Task.update(
       { isChecked: isChecked },
-      { where: { id: taskId } }
+      { where: { id: taskId, userId: req.user.user_id } }
     );
     if (result[0] === 0) {
       return res.status(404).json({ error: "Task not found" });
@@ -96,7 +94,7 @@ app.put("/title/:id", async (req, res) => {
   try {
     const result = await Task.update(
       { task: newTask, description: description },
-      { where: { id: taskId } }
+      { where: { id: taskId, userId: req.user.user.user_id } }
     );
     if (result[0] === 0) {
       return res.status(404).json({ error: "Task not found" });

@@ -29,7 +29,7 @@ const User = sequelize.define("User", {
 
 //sync the model with the database
 sequelize
-  .sync({ force: false })
+  .sync()
   .then(() => {
     console.log("User table created or already exists");
   })

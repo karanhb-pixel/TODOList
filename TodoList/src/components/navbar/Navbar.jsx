@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Navbar.css";
-import { useNavigate } from "react-router-dom";
-const Navbar = () => {
+import { Link, useNavigate } from "react-router-dom";
+const Navbar = ({ handleLogout }) => {
   const navigate = useNavigate();
+  const [log, setLog] = useState(false);
+  const handleLogoutClick = () => {
+    setLog(false);
+    handleLogout();
+    navigate("/login");
+  };
   return (
     <nav
       className="navbar navbar-expand-lg bg-body-tertiary"
@@ -26,14 +32,14 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="#">
+              <Link className="nav-link active" aria-current="page" to="/">
                 Home
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
+              <Link className="nav-link" to="/tasks">
                 Link
-              </a>
+              </Link>
             </li>
           </ul>
           <form className="d-flex gap-3" role="search">

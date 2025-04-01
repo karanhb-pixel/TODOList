@@ -22,17 +22,20 @@ function Login({ setAuthToken }) {
         email,
         password,
       });
+
       if (!response.data.token) {
         console.log("Token not found!");
         return;
       }
       localStorage.setItem("authToken", response.data.token);
-      // console.log(localStorage.getItem("authToken"));
 
       setAuthToken(response.data.token);
+
       alert("Login sucessfull!");
-      navigate("/");
+      navigate("/tasks");
     } catch (error) {
+      console.log("error:", error);
+
       if (error.response && error.response.data) {
         // Check if the server returned a specific error message
         const errorMessage = error.response.data.error || "An error occurred.";

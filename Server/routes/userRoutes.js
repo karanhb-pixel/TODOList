@@ -48,6 +48,7 @@ app.post("/register", async (req, res) => {
 
   //Login a user
   app.post("/login", async (req, res) => {
+    // console.log("Login Request Body:", req.body);
     const { email, password } = req.body;
     try {
       if (!email || !password) {

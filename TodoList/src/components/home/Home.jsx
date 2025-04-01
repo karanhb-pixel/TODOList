@@ -23,13 +23,11 @@ function Home() {
         }
 
         // Fetch tasks from the server when the component mounts
-        axios
-          .get("http://localhost:5000/tasks", {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then((response) => {
-            setCount(response.data); // Set the tasks in the state
-          });
+        const response = await axios.get("http://localhost:5000/tasks", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setCount(response.data); // Set the tasks in the state
       } catch (error) {
         if (error.response && error.response.data) {
           // Check if the server returned a specific error message
@@ -44,64 +42,60 @@ function Home() {
     fetchTasks();
   }, []); // Empty dependency array to run only once on mount
 
-  const handleAddTask = (task, description) => {
+  const handleAddTask = async (task, description) => {
     const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      alert("You are not Logged in!");
-    }
-
-    axios
-      .post(
+    try {
+      if (!token) {
+        alert("You are not Logged in!");
+      }
+      const response = await axios.post(
         "http://localhost:5000/tasks",
         { task, description },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      )
-      .then((response) => {
-        setCount([
-          ...count,
-          { id: response.data.id, task, description, isChecked: false },
-        ]); // Add the new task to the array
-      })
-      .catch((error) => {
-        console.error("Error adding task:", error); // Handle error response
-      });
+      );
+
+      setCount([
+        ...count,
+        { id: response.data.id, task, description, isChecked: false },
+      ]); // Add the new task to the array
+    } catch (error) {
+      console.error("Error adding task:", error); // Handle error response
+    }
   };
 
-  const handledelete = (taskId) => {
+  const handledelete = async (taskId) => {
     const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      alert("You are not Logged in!");
+    try {
+      if (!token) {
+        alert("You are not Logged in!");
+      }
+      const response = await axios.delete(
+        `http://localhost:5000/tasks/${taskId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setCount(count.filter((item) => item.id !== taskId)); // remove task from the array
+    } catch (error) {
+      console.error("Error deleting task:", error); // Handle error response
     }
-
-    axios
-      .delete(`http://localhost:5000/tasks/${taskId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setCount(count.filter((item) => item.id !== taskId)); // remove task from the array
-      })
-      .catch((error) => {
-        console.error("Error deleting task:", error); // Handle error response
-      });
   };
 
-  const handleedit = (taskId, isChecked) => {
+  const handleedit = async (taskId, isChecked) => {
     const token = localStorage.getItem("authToken");
+    try {
+      if (!token) {
+        alert("You are not Logged in!");
+      }
+      setCount(
+        count.map((item) =>
+          item.id === taskId ? { ...item, isChecked: !item.isChecked } : item
+        )
+      );
 
-    if (!token) {
-      alert("You are not Logged in!");
-    }
-    setCount(
-      count.map((item) =>
-        item.id === taskId ? { ...item, isChecked: !item.isChecked } : item
-      )
-    );
-    axios
-      .put(
+      const response = await axios.put(
         `http://localhost:5000/tasks/isChecked/${taskId}`,
         {
           isChecked: !isChecked,
@@ -109,17 +103,16 @@ function Home() {
         {
           headers: { Authorization: `Bearer ${token}` },
         }
-      )
-      .then(() => {})
-      .catch((error) => {
-        console.error("Error updating task:", error); // Handle error response
-        // Revert the change if the query fails
-        setCount(
-          count.map((item) =>
-            item.id === taskId ? { ...item, isChecked: isChecked } : item
-          )
-        );
-      });
+      );
+    } catch (error) {
+      console.error("Error updating task:", error); // Handle error response
+      // Revert the change if the query fails
+      setCount(
+        count.map((item) =>
+          item.id === taskId ? { ...item, isChecked: isChecked } : item
+        )
+      );
+    }
   };
 
   //this function is used to toggle the description of the task
