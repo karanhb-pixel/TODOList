@@ -9,8 +9,7 @@ import {
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import Navbar from "./components/navbar/Navbar";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+
 import LandingPage from "./components/landingPage/LandingPage";
 import { AuthProvider } from "./components/AuthContext";
 import PrivateRoute from "./components/privateRoute/PrivateRoute";

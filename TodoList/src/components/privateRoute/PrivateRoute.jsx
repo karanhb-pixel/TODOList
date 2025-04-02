@@ -3,10 +3,10 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { authToken } = useAuth();
 
   // If the user is not logged in, redirect to the login page
-  if (!user) {
+  if (!authToken) {
     return <Navigate to="/login" replace />;
   }
 

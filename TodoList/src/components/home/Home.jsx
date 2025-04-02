@@ -20,6 +20,7 @@ function Home() {
       try {
         if (!authToken) {
           alert("You are not Logged in!");
+          return;
         }
 
         // Fetch tasks from the server when the component mounts

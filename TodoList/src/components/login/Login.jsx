@@ -29,9 +29,12 @@ function Login({ setAuthToken }) {
         console.log("Token not found!");
         return;
       }
+      // console.log(response.data.user.username);
 
       login(response.data.token);
+
       alert("Login sucessfull!");
+
       navigate("/tasks");
     } catch (error) {
       console.error("error:", error);
