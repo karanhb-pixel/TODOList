@@ -74,7 +74,7 @@ function Login({ setAuthToken }) {
 
             <div className="mb-3">
               <label htmlFor="exampleInputpasswordword1" className="form-label">
-                passwordword
+                password
               </label>
               <input
                 type="password"
