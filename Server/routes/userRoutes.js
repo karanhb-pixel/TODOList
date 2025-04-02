@@ -2,6 +2,7 @@ import express from "express";
 import { User } from "../model/User_model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 const app = express.Router();
 
 //Register a new user
@@ -11,10 +12,12 @@ app.post("/register", async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
     const oldEmailUser = await User.findOne({ where: { email } });
     if (oldEmailUser) {
       return res.status(400).json({ error: "User with Email already exists" });
     }
+
     const oldUsernameUser = await User.findOne({ where: { username } });
     if (oldUsernameUser) {
       return res
@@ -34,22 +37,23 @@ app.post("/register", async (req, res) => {
 
     res.status(201).json({ message: "User Register Successfully!" });
   } catch (error) {
-    // console.error("Error registering user:", error);
     res.status(500).json({ error: "Error registering user" });
   }
 });
 
 //Login a user
 app.post("/login", async (req, res) => {
-  // console.log("Login Request Body:", req.body);
   const { email, password } = req.body;
+
   try {
     if (!email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    //find uesr with email
     const user = await User.findOne({ where: { email } });
 
+    //if user exist and password match then create token
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
         { user_id: user.id, email },

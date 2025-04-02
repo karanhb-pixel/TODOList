@@ -1,6 +1,5 @@
 import express from "express";
 import { Task } from "../model/Task_model.js";
-import { where } from "sequelize";
 
 const app = express.Router();
 
@@ -14,7 +13,6 @@ app.get("/", async (req, res) => {
       ...item.toJSON(), // Convert Sequelize instance to plain object
       isChecked: !!item.isChecked, // Convert 1/0 to true/false
     }));
-    // console.log(normalizedData);
     res.json(normalizedData);
   } catch (error) {
     console.error("Error fetching tasks:", error);

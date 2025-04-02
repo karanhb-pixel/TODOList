@@ -1,3 +1,5 @@
+import { User } from "../model/User_model";
+
 const getProfile = async (req, res) => {
   try {
     // Get user from database using ID from JWT

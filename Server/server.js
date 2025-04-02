@@ -15,7 +15,6 @@ app.use(express.json());
 app.use("/auth", userRoutes);
 
 //middleware for routes protection
-
 app.use("/tasks", authMiddleware, taskRoutes); //Use the taskRoutes
 
 //get user profile
