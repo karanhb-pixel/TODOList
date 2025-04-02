@@ -3,7 +3,9 @@ import express from "express";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import authMiddleware from "./middleware/auth.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 const PORT = process.env.DB_PORT || 5000;
 app.use(cors());
