@@ -8,6 +8,7 @@ const ExpandableItem = ({
   onToggle,
   onDelete,
   onToggleCheck,
+  onEdit,
 }) => {
   // Format the updated_at date using new Date()
   const formattedDate = new Date(item.updated_at).toLocaleString("en-US", {
@@ -24,6 +25,7 @@ const ExpandableItem = ({
       <li className="list-group-item list-item-main">
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center">
+            <span className="badge text-bg-dark mx-2">{item.id}</span>
             <input
               type="checkbox"
               className="mx-2 checkbox"
@@ -35,10 +37,7 @@ const ExpandableItem = ({
             </span>
           </div>
           <div className="button-group d-flex gap-2">
-            <button
-              className="btn btn-primary"
-              // onClick={() => onDelete(item.id)}
-            >
+            <button className="btn btn-primary" onClick={() => onEdit(item)}>
               <MdOutlineEdit />
             </button>
             <button

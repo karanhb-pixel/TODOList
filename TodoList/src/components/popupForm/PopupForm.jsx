@@ -1,20 +1,42 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
+function PopupForm({
+  isModelOpen,
+  setIsModelOpen,
+  handleAddTask,
+  handleEditTask,
+  editTask,
+}) {
   const [task, setTask] = useState(""); // Separate state for the input field
   const [description, setDescription] = useState(""); // State to manage description
+
+  useEffect(() => {
+    if (editTask) {
+      setTask(editTask.task); // Set the task for editing
+      setDescription(editTask.description); // Set the description for editing
+    } else {
+      setTask(""); // Reset task input field
+      setDescription(""); // Reset description input field
+    }
+  }, [editTask]); // Run when editTask changes
 
   const handleadd = (e) => {
     e.preventDefault();
 
-    if (task.trim() !== "") {
-      handleAddTask(task, description); // Call the function to add task
-      setIsModelOpen(false); // Close the modal
-
-      setTask("");
-      setDescription("");
+    if (task.trim() === "") {
+      alert("Task Name is required"); // Alert if task name is empty
+      return;
     }
+
+    if (editTask) {
+      handleEditTask(editTask.id, task, description); // Call the function to edit task
+    } else {
+      handleAddTask(task, description); // Call the function to add task
+    }
+    setIsModelOpen(false); // Close the modal
+    setTask("");
+    setDescription("");
   };
   return (
     <>
@@ -25,7 +47,7 @@ function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
         id="exampleModal"
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
-        aria-hidden={!isModelOpen}
+        // aria-hidden={!isModelOpen}
         inert={!isModelOpen}
       >
         <div className="modal-dialog modal-dialog-centered">

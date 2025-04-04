@@ -81,7 +81,7 @@ app.put("/isChecked/:id", async (req, res) => {
 });
 
 // Update a Task's title or description status
-app.put("/title/:id", async (req, res) => {
+app.put("/:id", async (req, res) => {
   const taskId = req.params.id;
   const newTask = req.body.task;
   const description = req.body.description || null; // Optional description
@@ -90,6 +90,20 @@ app.put("/title/:id", async (req, res) => {
   }
 
   try {
+    // Check if the task exists
+    const task = await Task.findOne({
+      where: { id: taskId, userId: req.user.id },
+    });
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    // Check if the task or description has changed
+    if (task.task === newTask && task.description === description) {
+      return res.status(200).json({ message: "No changes made to the task" });
+    }
+
     const result = await Task.update(
       { task: newTask, description: description },
       { where: { id: taskId, userId: req.user.id } }

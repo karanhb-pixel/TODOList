@@ -11,7 +11,7 @@ function Home() {
   const [isModelOpen, setIsModelOpen] = useState(false); // State to manage modal visibility
   const [openDescriptionId, setOpenDescriptionId] = useState(null); // State to manage which task's description is open
   const { authToken } = useAuth();
-
+  const [editTask, setEditTask] = useState(null); // State to manage the task being edited
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -114,9 +114,41 @@ function Home() {
     }
   };
 
+  const handleTaskEdit = async (taskId, newTask, newDescription) => {
+    try {
+      if (!authToken) {
+        alert("You are not Logged in!");
+        return;
+      }
+
+      const response = await axios.put(
+        `${config.BASE_URL}/tasks/${taskId}`,
+        { task: newTask, description: newDescription },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      setCount(
+        count.map((item) =>
+          item.id === taskId
+            ? { ...item, task: newTask, description: newDescription }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating task:", error); // Handle error response
+    }
+  };
+
   //this function is used to toggle the description of the task
   const toggleDescription = (taskId) => {
     setOpenDescriptionId((prevId) => (prevId === taskId ? null : taskId));
+  };
+
+  const openEditModel = (task) => {
+    setEditTask(task); // Set the task to be edited
+    setIsModelOpen(true); // Open the modal for editing
   };
 
   return (
@@ -146,6 +178,7 @@ function Home() {
                   onToggle={toggleDescription}
                   onDelete={handledelete}
                   onToggleCheck={handleedit}
+                  onEdit={openEditModel}
                 />
               ))
             )}
@@ -157,6 +190,8 @@ function Home() {
         isModelOpen={isModelOpen}
         setIsModelOpen={setIsModelOpen}
         handleAddTask={handleAddTask}
+        handleEditTask={handleTaskEdit}
+        editTask={editTask}
       />
     </div>
   );
