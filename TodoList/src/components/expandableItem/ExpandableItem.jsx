@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "./ExpandableItem.css";
-
+import { MdOutlineEdit, MdDeleteForever } from "react-icons/md";
 const ExpandableItem = ({
   item,
   isExpanded,
@@ -36,16 +36,22 @@ const ExpandableItem = ({
           </div>
           <div className="button-group d-flex gap-2">
             <button
+              className="btn btn-primary"
+              // onClick={() => onDelete(item.id)}
+            >
+              <MdOutlineEdit />
+            </button>
+            <button
               className="btn btn-danger"
               onClick={() => onDelete(item.id)}
             >
-              Delete
+              <MdDeleteForever />
             </button>
             <button
               className="btn btn-secondary"
               onClick={() => onToggle(item.id)}
             >
-              Details {isExpanded ? "▲" : "▼"}
+              {isExpanded ? "▲" : "▼"}
             </button>
           </div>
         </div>
