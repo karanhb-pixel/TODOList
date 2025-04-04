@@ -1,18 +1,12 @@
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/home/Home";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
 import Register from "./components/register/Register";
 import Login from "./components/login/Login";
 import Navbar from "./components/navbar/Navbar";
-
 import LandingPage from "./components/landingPage/LandingPage";
 import { AuthProvider } from "./components/AuthContext";
 import PrivateRoute from "./components/privateRoute/PrivateRoute";
+import "./App.css";
 
 function App() {
   return (

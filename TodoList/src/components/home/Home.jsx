@@ -1,16 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useEffect } from "react";
 import "./Home.css";
 import Popupform from "../popupForm/PopupForm";
 import ExpandableItem from "../expandableItem/ExpandableItem";
 import { useAuth } from "../AuthContext";
+import config from "../../config";
 
 function Home() {
   const [count, setCount] = useState([]); // Initialize as an empty array
-  const [task, setTask] = useState(""); // Separate state for the input field
-  const [isChecked, setIsChecked] = useState(false); // State to manage checkbox
-  const [description, setDescription] = useState(""); // State to manage description
   const [isModelOpen, setIsModelOpen] = useState(false); // State to manage modal visibility
   const [openDescriptionId, setOpenDescriptionId] = useState(null); // State to manage which task's description is open
   const { authToken } = useAuth();
@@ -24,7 +21,7 @@ function Home() {
         }
 
         // Fetch tasks from the server when the component mounts
-        const response = await axios.get("http://localhost:5000/tasks", {
+        const response = await axios.get(`${config.BASE_URL}/tasks`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
 
@@ -49,7 +46,7 @@ function Home() {
         alert("You are not Logged in!");
       }
       const response = await axios.post(
-        "http://localhost:5000/tasks",
+        `${config.BASE_URL}/tasks`,
         { task, description },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -71,7 +68,7 @@ function Home() {
         alert("You are not Logged in!");
       }
       const response = await axios.delete(
-        `http://localhost:5000/tasks/${taskId}`,
+        `${config.BASE_URL}/tasks/${taskId}`,
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
@@ -95,7 +92,7 @@ function Home() {
       );
 
       const response = await axios.put(
-        `http://localhost:5000/tasks/isChecked/${taskId}`,
+        `${config.BASE_URL}/tasks/isChecked/${taskId}`,
         {
           isChecked: !isChecked,
         },
@@ -104,7 +101,10 @@ function Home() {
         }
       );
     } catch (error) {
-      console.error("Error updating task:", error); // Handle error response
+      const errorMessage =
+        error.response?.data?.error ||
+        "An error occurred while updating the task.";
+      alert(errorMessage); // Display a meaningful error message
       // Revert the change if the query fails
       setCount(
         count.map((item) =>

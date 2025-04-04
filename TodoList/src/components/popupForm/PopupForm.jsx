@@ -1,7 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import axios from "axios";
-import { useEffect } from "react";
 
 function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
   const [task, setTask] = useState(""); // Separate state for the input field
@@ -11,7 +9,6 @@ function PopupForm({ isModelOpen, setIsModelOpen, handleAddTask }) {
     e.preventDefault();
 
     if (task.trim() !== "") {
-      // console.log(task, description);
       handleAddTask(task, description); // Call the function to add task
       setIsModelOpen(false); // Close the modal
 

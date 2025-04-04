@@ -3,6 +3,7 @@ import "./Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import config from "../../config";
 
 function Login({ setAuthToken }) {
   const [email, setEmail] = useState("");
@@ -12,29 +13,26 @@ function Login({ setAuthToken }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    //checking Username, Email, Pawword empty also checkbox is checked.
-
+    //checking Email, Pawword empty .
     if (!email.trim() || !password.trim()) {
       alert("Feild cannot be empty!");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await axios.post(`${config.BASE_URL}/auth/login`, {
         email,
         password,
       });
 
       if (!response.data.token) {
-        console.log("Token not found!");
+        alert("Login failed! Token not received from the server.");
+        navigate("/login"); // Redirect back to the login page
         return;
       }
-      // console.log(response.data.user.username);
 
       login(response.data.token);
-
       alert("Login sucessfull!");
-
       navigate("/tasks");
     } catch (error) {
       console.error("error:", error);
