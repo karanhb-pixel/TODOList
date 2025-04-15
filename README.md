@@ -43,7 +43,7 @@ A full-stack TodoList application with user authentication, task management, and
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/karanhb-pixel/TODOList.git>
 cd TODOList
 ```
 
