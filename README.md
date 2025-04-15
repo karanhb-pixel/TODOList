@@ -121,7 +121,14 @@ TODOList/
         ├── App.jsx       # Root component
         └── main.jsx      # Entry point
 ```
+## Add Task
 ![Alt text](Image/TodoList-2.jpg)
+
+## Task Details
 ![Alt text](Image/TodoList-3.jpg)
+
+## Login Page
 ![Alt text](Image/TodoList-4.jpg)
+
+## Registration Page
 ![Alt text](Image/TodoList-5.jpg)
